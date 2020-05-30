@@ -1,106 +1,76 @@
 import React, {Component} from 'react'
+import MovieList from "./MoviesList.js"
+import {movieConfig} from "../config.js"
 const axios = require('axios')
+const firebase = require('firebase')
+
 
 export class Movies extends Component{
     constructor(props){
         super(props);
         
         this.state = {
-            ids: ["tt0061418", "tt0033467", "tt0068646", "tt0137523",
+            ids: ["tt0061418",
+             "tt0033467", "tt0068646", "tt0137523",
                 "tt0114814", "tt0169547", "tt0144084", "tt0206634", "tt1130884", "tt0092005", "tt0338013",
                 "tt0264464", "tt0075314", "tt0066921", "tt0432283", "tt0034583", "tt0099348", "tt0095016"],
-            response: [],
+            movies: [],
         }
 
-        this.displayLightBox = this.displayLightBox.bind(this);
-        this.hideLightbox = this.hideLightbox.bind(this);
+        if (!firebase.apps.length) {
+            firebase.initializeApp(movieConfig)
+        }
+
+
     }
 
     componentDidMount() {
-
-        var promises = this.state.ids.map(id => {
-            return axios.get('https://www.omdbapi.com/?apikey=d0b4efe6&i=' + id)
+        let ref = firebase.database().ref("Watched")
+        ref.on('value', snapshot => {
+            this.setState({
+                movies: snapshot.val(),
+            }) 
         })
 
-        // Purposely wait for all the info from all the movies to display in same order each time
-        Promise.all(promises).then((values) => {
-            values.forEach((value) => {
-                let newState = this.state.response;
-                newState.push({
-                    Poster: value.data.Poster,
-                    Title: value.data.Title,
-                    Director: value.data.Director,
-                    Rating: value.data.imdbRating,
-                    Plot: value.data.Plot,
-                })
-                this.setState({
-                    response: newState,
-                })
-            })
-        })
-    }
-
-    hideLightbox(event){
-        var lBox = document.getElementById("lightbox");
-        if(event.target.id !== "lightbox")
-            return;
-        // Reenable scroll and remove lightbox
-        document.body.style.overflowY = "scroll"
-        lBox.style.display = "none";
-    }
-
-    displayLightBox(movieInfo){
-        var lBox = document.getElementById("lightbox");
-        var divTitle = document.getElementById("LBPosterTitle");
-        var divDirector = document.getElementById("LBPosterDirector");
-        var divRating = document.getElementById("LBPosterRating");
-        var divPlot = document.getElementById("LBPosterPlot");
-        var overlayImg = document.getElementById("overlay_img");
-
-        // Disable Scrolling
-        document.body.style.overflow = "hidden"
-        
-        // Display lightbox
-        lBox.style.display = "flex";
-        
-        // Change Image
-        overlayImg.src = movieInfo.Poster;
-        overlayImg.alt = movieInfo.Title;
-        
-        // Fill out movies info
-        divTitle.textContent = movieInfo.Title;
-        divDirector.textContent = "Directed by " + movieInfo.Director;
-        divRating.textContent = "IMDB Rating: " + movieInfo.Rating + "/10";
-        divPlot.textContent = movieInfo.Plot;
-
-        // Set rating's color based on rating
-        if (parseFloat(movieInfo.Rating) >= 7.0)
-            divRating.style.color = "green";
-        else
-            divRating.style.color = "red";
 
     }
+
+    // let newState = [];
+    // for (let item in items) {
+    //   newState.push({
+    //     id: item,
+    //     name: items[item].name,
+    //     description: items[item].description,
+    //     message: items[item].message,
+    //     display: (items[item].display === "Yes") ? true : false,
+    //     email: items[item].email,
+    //     time: items[item].time,
+
+    //   });
+    // }
+
+    // this.setState({
+    //   response: newState
+    // });
+
+
+
+
+
+    // Add movies to database
+    // this.state.ids.map(id => {
+    //     axios.get('https://www.omdbapi.com/?apikey=d0b4efe6&i=' + id)
+    //         .then((value) => {
+    //             firebase.database().ref('Watched/'+ value.data.imdbID).set(value.data)
+    //         })
+    // })
+
+
 
     render(){        
         return (
-        <div>
-            <div className="posterGrid">
-                {this.state.response.map(x => (
-                    <div className="poster"><img className="posterImg" src={x.Poster} alt={x.Title} onClick={() => this.displayLightBox(x)}/></div>
-                ))}
-            </div>
-            <div className="lightbox" id="lightbox" style={{display: this.state.lbDisplay}} onClick={this.hideLightbox}>
-                <div className="LBDisplay" id="LBDisplay">
-                    <img className="LBImage" id="overlay_img" alt="overlay"/>
-                    <div className="LBInfo" id="LBInfo">
-                        <div id="LBPosterTitle"/>
-                        <div id="LBPosterDirector"/>
-                        <div id="LBPosterRating"/>
-                        <div id="LBPosterPlot"/>
-                    </div>
-                </div>
-            </div>
-        </div>
+            // <div></div>
+            <MovieList movies={this.state.movies}/>
         )
     };
 }

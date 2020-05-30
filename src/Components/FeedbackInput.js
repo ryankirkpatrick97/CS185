@@ -1,5 +1,5 @@
 import React, {Component} from 'react'
-import config from '../config.js'
+import {feedbackConfig} from '../config.js'
 import moment from 'moment';
 
 const firebase = require('firebase')
@@ -49,7 +49,7 @@ export class FeedbackInput extends Component{
 
     updateFirebase(){
         if (!firebase.apps.length) {
-            firebase.initializeApp(config)
+            firebase.initializeApp(feedbackConfig)
         }
         firebase.database().ref('response').push().set(this.state)
     }

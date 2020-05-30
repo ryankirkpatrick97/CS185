@@ -1,5 +1,5 @@
 import React, {Component} from 'react'
-import config from '../config.js'
+import { feedbackConfig} from '../config.js'
 const firebase = require('firebase')
 
 export class FeedbackResponse extends Component{
@@ -11,7 +11,7 @@ export class FeedbackResponse extends Component{
 
     componentDidMount(){
         if (!firebase.apps.length) {
-            firebase.initializeApp(config)
+            firebase.initializeApp(feedbackConfig)
         }
         let ref = firebase.database().ref("response")
         ref.on('value', snapshot => {
