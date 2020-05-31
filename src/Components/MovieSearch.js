@@ -1,7 +1,6 @@
 import React, {Component} from 'react'
 import {movieConfig} from "../config.js"
 const axios = require('axios')
-const firebase = require('firebase')
 
 
 export class MovieSearch extends Component{
@@ -10,12 +9,7 @@ export class MovieSearch extends Component{
 
         this.state = {
             searchStr: "",
-        }
-
-        if (!firebase.apps.length) {
-            firebase.initializeApp(movieConfig)
-        }
-        
+        }        
 
         this.selectList = (event) => {
             let val = event.target.value;
@@ -41,7 +35,7 @@ export class MovieSearch extends Component{
         let found = false;
 
         // Check to see if searchStr is in database 
-        let ref = firebase.database().ref();
+        let ref = this.props.firebase.database().ref();
         ref.on('value', snapshot => {
             snapshot.forEach((listChild) => {
                 listChild.forEach((movieChild) => {
@@ -85,8 +79,8 @@ export class MovieSearch extends Component{
                 <textarea type="text" name="searchStr" onChange={this.handleChange} />
                 </label>
 
-                <div className="addButton">
-                    <input type="submit" onClick={this.search}/>
+                <div id="searchButton">
+                    <input type="submit" name="Search" onClick={this.search}/>
                 </div>
 
 

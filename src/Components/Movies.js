@@ -19,11 +19,8 @@ export class Movies extends Component{
             currentList: "All",
             movies: [],
         }
+        this.name = "movieApp";
 
-        if (!firebase.apps.length) {
-            firebase.initializeApp(movieConfig)
-        }
-        
         this.loadFromFirebase = this.loadFromFirebase.bind(this);
 
         this.selectList = (event) => {
@@ -36,7 +33,7 @@ export class Movies extends Component{
         this.addList = (event) => {
             let value = prompt("What would you like to name the new list?")
             if(value != null){
-                firebase.database().ref(value).set('')
+                this.state.firebase.database().ref(value).set('')
             }
         }
 
@@ -64,7 +61,7 @@ export class Movies extends Component{
         
         // Read the lists from firebase
         movieListsToRead.map((x) => {
-            let ref = firebase.database().ref(x);
+            let ref = this.state.firebase.database().ref(x);
             ref.on('value', snapshot => {
                 if(snapshot.val() != null){
                     Object.entries(snapshot.val()).map(([key, movie]) => {
@@ -80,8 +77,21 @@ export class Movies extends Component{
     }
 
     componentDidMount() {
+        // Initialize/Recall firebase connection
+        var newFirebase;
+        try {
+            newFirebase = firebase.app(this.name);
+        } catch (error) {
+            newFirebase = firebase.initializeApp(movieConfig, this.name)
+        }
+
+        // Set firebase to state variable
+        this.setState({
+            firebase: newFirebase,
+        }, () => {
+
         // Read what lists are available in the firebase database, and then store in movieLists
-        let ref = firebase.database().ref()
+        let ref = this.state.firebase.database().ref()
         ref.on('value', snapshot => {
             let movieLists = ["All"];
             snapshot.forEach(child => {
@@ -95,6 +105,8 @@ export class Movies extends Component{
                 () =>{this.loadFromFirebase(this.state.currentList);}
             );
         });
+
+        });
     }
 
     // Add movies to database
@@ -105,31 +117,32 @@ export class Movies extends Component{
     //         })
     // })
 
-    
-
     render(){
+        if(this.state.firebase != null){
+            return(
+                <div>
+                    <form id="movieForm">
+                    <label>
+                    <select name="test" onChange={this.selectList}>
+                        {this.state.movieLists.map((x) => (
+                            <option name="test" value={x}>{x}</option>
+                        ))}
+                    </select>
+                    </label>
+                    </form>
 
-        return (
-            <div>
-                <form id="movieForm">
-                <label>
-                <select value={this.state.display} name="display" onChange={this.selectList}>
-                    {this.state.movieLists.map((x) => (
-                        <option name="display" value={x}>{x}</option>
-                    ))}
-                </select>
-                </label>
 
+                    <div>
+                        <input type="submit" value="Add List" onClick={this.addList}/>
+                    </div>
 
-                <div className="addButton">
-                    <input type="submit" value="Add List" onClick={this.addList}/>
+                    <MovieSearch firebase={this.state.firebase} setMovies={this.setMovies} />
+                    <MovieList firebase={this.state.firebase} movies={this.state.movies} movieLists={this.state.movieLists}/>
                 </div>
-                </form>
-
-                <MovieSearch setMovies={this.setMovies}/>
-                <MovieList movies={this.state.movies} movieLists={this.state.movieLists}/>
-            </div>
-        )
+                )
+        } else {
+            return(<div></div>)
+        }
     };
 }
 export default Movies;

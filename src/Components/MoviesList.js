@@ -61,10 +61,29 @@ export class MoviesList extends Component{
                 <div className="LBDisplay" id="LBDisplay">
                     <img className="LBImage" id="overlay_img" alt="overlay"/>
                     <div className="LBInfo" id="LBInfo">
-                        <div id="LBPosterTitle"/>
-                        <div id="LBPosterDirector"/>
-                        <div id="LBPosterRating"/>
-                        <div id="LBPosterPlot"/>
+                        <div id="PosterInfo">
+                            <div id="LBPosterTitle"/>
+                            <div id="LBPosterDirector"/>
+                            <div id="LBPosterRating"/>
+                            <div id="LBPosterPlot"/>
+                        </div>
+                        <div id="DatabaseInfo">
+                            <div id="DBIList">
+                                <label>
+                                <select name="display" onChange={this.selectList}>
+                                    {this.props.movieLists.map((x) => (
+                                        <option name="display" value={x}>{x}</option>
+                                    ))}
+                                </select>
+                                </label>
+                            </div>
+                            <div id="DBIAddToList">
+                                <input type="submit" value="Add to List" onClick={this.addList}/>
+                            </div>
+                            <div id="DBIDeleteMovie">
+                                <input type="submit" value="Delete from Database" onClick={this.addList}/>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>

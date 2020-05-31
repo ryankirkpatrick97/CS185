@@ -46,7 +46,7 @@ header{
 }
 
 .nav-item-active {
-    background-color: #008081;
+    background-color: teal;
 }
 
 
@@ -282,21 +282,18 @@ select{
 
 
  /* Button */
- input[type=submit] {
-    -moz-box-shadow: inset -3px -3px 10px #cc870a;
-    -webkit-box-shadow: inset -3px -3px 10px #cc870a;
-    box-shadow: inset -3px -3px 10px #cc870a;
-    background-color: #f7b31c; /* Fill color */
-    color: white; /* Text color */
+ input[type=submit]#feedbackSubmit {
+    background-color: #eee;
+    color: teal; /* Text color */
     border-radius: 15px; /* Rounded button edges */
-    font-style: italic; /* Italicize text */
     padding: 10px 30px; /* Distance between text and border */
     font-weight: bold;
+    border-color:teal;
  }
 
- div.submitButton{
-     padding-top:10px; 
-     text-align:center;
+ div#feedbackButton{
+    padding-top:10px; 
+    text-align:center;
  }
 
  div.FirebaseScroll{

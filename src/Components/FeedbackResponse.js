@@ -1,6 +1,5 @@
 import React, {Component} from 'react'
 import { feedbackConfig} from '../config.js'
-const firebase = require('firebase')
 
 export class FeedbackResponse extends Component{
     constructor(props) {
@@ -10,10 +9,7 @@ export class FeedbackResponse extends Component{
 
 
     componentDidMount(){
-        if (!firebase.apps.length) {
-            firebase.initializeApp(feedbackConfig)
-        }
-        let ref = firebase.database().ref("response")
+        let ref = this.props.firebase.database().ref("response")
         ref.on('value', snapshot => {
             let items = snapshot.val();
             let newState = [];
@@ -36,14 +32,6 @@ export class FeedbackResponse extends Component{
 
           });
     };
-
-    componentDidUpdate(prevProps, prevState, snapshot){
-        //only call set state here if it is wrapped in a condition
-        //if you initialize this.state.shouldUpdate and have not changed it yet then this will not run
-        if(this.state.shouldUpdate !== prevState.shouldUpdate){
-            //same code as above to retrieve the data 
-        }
-    }
 
 
     displayMessage(item){

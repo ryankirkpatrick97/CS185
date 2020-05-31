@@ -48,10 +48,7 @@ export class FeedbackInput extends Component{
     }
 
     updateFirebase(){
-        if (!firebase.apps.length) {
-            firebase.initializeApp(feedbackConfig)
-        }
-        firebase.database().ref('response').push().set(this.state)
+        this.props.firebase.database().ref('response').push().set(this.state)
     }
 
 
@@ -86,8 +83,8 @@ export class FeedbackInput extends Component{
                 </select>
                 </label>
                 
-                <div className="submitButton">
-                <input type="submit" value="Submit" />
+                <div id="feedbackButton">
+                <input id="feedbackSubmit" type="submit" value="Submit" />
                 </div>
                 
             </form>
