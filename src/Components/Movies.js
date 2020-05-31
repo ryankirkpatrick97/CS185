@@ -1,5 +1,6 @@
 import React, {Component} from 'react'
 import MovieList from "./MoviesList.js"
+import MovieSearch from "./MovieSearch.js"
 import {movieConfig} from "../config.js"
 const axios = require('axios')
 const firebase = require('firebase')
@@ -34,7 +35,15 @@ export class Movies extends Component{
 
         this.addList = (event) => {
             let value = prompt("What would you like to name the new list?")
-            firebase.database().ref(value).set('')
+            if(value != null){
+                firebase.database().ref(value).set('')
+            }
+        }
+
+        this.setMovies = (movies) => {
+            this.setState({
+                movies: movies,
+            });
         }
     }
 
@@ -83,7 +92,7 @@ export class Movies extends Component{
                 movieLists: movieLists,
             }, 
                 // Load all the movies from firebase
-                this.loadFromFirebase(this.state.currentList)
+                () =>{this.loadFromFirebase(this.state.currentList);}
             );
         });
     }
@@ -102,6 +111,7 @@ export class Movies extends Component{
 
         return (
             <div>
+                <form id="movieForm">
                 <label>
                 <select value={this.state.display} name="display" onChange={this.selectList}>
                     {this.state.movieLists.map((x) => (
@@ -110,11 +120,14 @@ export class Movies extends Component{
                 </select>
                 </label>
 
+
                 <div className="addButton">
                     <input type="submit" value="Add List" onClick={this.addList}/>
                 </div>
+                </form>
 
-                <MovieList movies={this.state.movies}/>
+                <MovieSearch setMovies={this.setMovies}/>
+                <MovieList movies={this.state.movies} movieLists={this.state.movieLists}/>
             </div>
         )
     };
