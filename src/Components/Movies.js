@@ -10,52 +10,83 @@ export class Movies extends Component{
         super(props);
         
         this.state = {
-            ids: ["tt0061418",
-             "tt0033467", "tt0068646", "tt0137523",
-                "tt0114814", "tt0169547", "tt0144084", "tt0206634", "tt1130884", "tt0092005", "tt0338013",
-                "tt0264464", "tt0075314", "tt0066921", "tt0432283", "tt0034583", "tt0099348", "tt0095016"],
+            // ids: ["tt0061418",
+            //  "tt0033467", "tt0068646", "tt0137523",
+            //     "tt0114814", "tt0169547", "tt0144084", "tt0206634", "tt1130884", "tt0092005", "tt0338013",
+            //     "tt0264464", "tt0075314", "tt0066921", "tt0432283", "tt0034583", "tt0099348", "tt0095016"],
+            movieLists: ["All"],
+            currentList: "All",
             movies: [],
         }
 
         if (!firebase.apps.length) {
             firebase.initializeApp(movieConfig)
         }
+        
+        this.loadFromFirebase = this.loadFromFirebase.bind(this);
+
+        this.selectList = (event) => {
+            let val = event.target.value;
+            this.setState({
+                currentList: val,
+            }, this.loadFromFirebase(val));
+        };
+
+        this.addList = (event) => {
+            let value = prompt("What would you like to name the new list?")
+            firebase.database().ref(value).set('')
+        }
+    }
 
 
+    loadFromFirebase(listName) {
+        var newMovies = {};
+        var movieListsToRead = [];
+        // Choose which movies to read
+        if(listName == "All"){
+            // Remove "All" from list of movies
+            movieListsToRead = [...this.state.movieLists];
+            var index = movieListsToRead.indexOf("All");
+            movieListsToRead.splice(index, 1);
+        } else {
+            // Make list of just current list
+            movieListsToRead = [listName];
+        }
+        
+        // Read the lists from firebase
+        movieListsToRead.map((x) => {
+            let ref = firebase.database().ref(x);
+            ref.on('value', snapshot => {
+                if(snapshot.val() != null){
+                    Object.entries(snapshot.val()).map(([key, movie]) => {
+                        newMovies[key] = movie;
+                    });
+                }
+
+                this.setState({
+                    movies: newMovies,
+                });
+            });
+        });
     }
 
     componentDidMount() {
-        let ref = firebase.database().ref("Watched")
+        // Read what lists are available in the firebase database, and then store in movieLists
+        let ref = firebase.database().ref()
         ref.on('value', snapshot => {
+            let movieLists = ["All"];
+            snapshot.forEach(child => {
+                movieLists.push(child.key)
+            })
+
             this.setState({
-                movies: snapshot.val(),
-            }) 
-        })
-
-
+                movieLists: movieLists,
+            }, 
+                // Load all the movies from firebase
+                this.loadFromFirebase(this.state.currentList)
+            );
+        });
     }
-
-    // let newState = [];
-    // for (let item in items) {
-    //   newState.push({
-    //     id: item,
-    //     name: items[item].name,
-    //     description: items[item].description,
-    //     message: items[item].message,
-    //     display: (items[item].display === "Yes") ? true : false,
-    //     email: items[item].email,
-    //     time: items[item].time,
-
-    //   });
-    // }
-
-    // this.setState({
-    //   response: newState
-    // });
-
-
-
-
 
     // Add movies to database
     // this.state.ids.map(id => {
@@ -65,12 +96,26 @@ export class Movies extends Component{
     //         })
     // })
 
+    
 
+    render(){
 
-    render(){        
         return (
-            // <div></div>
-            <MovieList movies={this.state.movies}/>
+            <div>
+                <label>
+                <select value={this.state.display} name="display" onChange={this.selectList}>
+                    {this.state.movieLists.map((x) => (
+                        <option name="display" value={x}>{x}</option>
+                    ))}
+                </select>
+                </label>
+
+                <div className="addButton">
+                    <input type="submit" value="Add List" onClick={this.addList}/>
+                </div>
+
+                <MovieList movies={this.state.movies}/>
+            </div>
         )
     };
 }

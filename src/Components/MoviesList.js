@@ -1,5 +1,4 @@
 import React, {Component} from 'react'
-const axios = require('axios')
 
 export class MoviesList extends Component{
     constructor(props){
@@ -55,7 +54,8 @@ export class MoviesList extends Component{
             <div className="posterGrid">
                 {Object.entries(this.props.movies).map(([key, movie]) => (
                     <div className="poster"><img className="posterImg" src={movie.Poster} alt={movie.Title} onClick={() => this.displayLightBox(movie)}/></div>
-                ))}
+                ))
+                }
             </div>
             <div className="lightbox" id="lightbox" onClick={this.hideLightbox}>
                 <div className="LBDisplay" id="LBDisplay">
