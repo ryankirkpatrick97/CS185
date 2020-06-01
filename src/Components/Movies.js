@@ -1,5 +1,5 @@
 import React, {Component} from 'react'
-import MovieList from "./MoviesList.js"
+import MoviePage from "./MoviePage.js"
 import MovieSearch from "./MovieSearch.js"
 import {movieConfig} from "../config.js"
 const axios = require('axios')
@@ -132,8 +132,7 @@ export class Movies extends Component{
                         <MovieSearch firebase={this.state.firebase} setMovies={this.setMovies} />
                     </div>
 
-
-                    <MovieList firebase={this.state.firebase} movies={this.state.movies} movieLists={this.state.movieLists}/>
+                    <MoviePage firebase={this.state.firebase} movies={this.state.movies}/>
                 </div>
                 )
         } else {
