@@ -3,8 +3,71 @@ import React, {Component} from 'react'
 export class MoviesList extends Component{
     constructor(props){
         super(props);
+        this.state = {
+            unlinkedMovieLists: [],
+            currentMovie: {},
+            currentList: '',
+        }
+
+
         this.displayLightBox = this.displayLightBox.bind(this);
         this.hideLightbox = this.hideLightbox.bind(this);
+        this.findUnlinkedMovieLists = this.findUnlinkedMovieLists.bind(this);
+        this.addMovieToList = this.addMovieToList.bind(this);
+
+        this.handleChange = (event) => {
+            let nam = event.target.name;
+            let val = event.target.value;
+            this.setState({[nam]: val});
+        }
+    }
+
+    addMovieToList(){
+        // Add movie to currentList
+        if(this.state.currentList != ''){
+            this.props.firebase.database().ref(this.state.currentList + "/" + this.state.currentMovie.imdbID).set(this.state.currentMovie);
+            alert(this.state.currentMovie.Title + " successfully added to " + this.state.currentList);
+            this.findUnlinkedMovieLists(this.state.currentMovie.imdbID);
+        } else {
+            alert("Error: Movie is already in all lists");
+        }
+    }
+
+    findUnlinkedMovieLists(imdbID){
+        // Initialize unlinkedMovieLists, and remove "All from "
+        var unlinkedMovieLists = [];
+        var currentList = [];
+
+
+        // Loop through database, and add listname to unlinkedMovieLists if it doesn't contain lightboxed movie
+        let ref = this.props.firebase.database().ref();
+        ref.on('value', snapshot => {
+            snapshot.forEach((listChild) => {
+                // Search each list for if movie is contained
+                let found = false;
+                listChild.forEach((movieChild) => {
+                    if(movieChild.val() != null){
+                        if(movieChild.key === imdbID){
+                            // Movie was found in list, so exit loop
+                            found = true;
+                            return;
+                        }
+                    }
+                })
+                // Movie wasn't found in list, so add list to unnlinkedMoveiLists
+                if(!found){
+                    unlinkedMovieLists.push(listChild.key);
+                    currentList[0] = unlinkedMovieLists[0];
+                }
+            })
+            
+        },
+            this.setState({
+                currentList: currentList,
+                unlinkedMovieLists: unlinkedMovieLists,
+            })
+        );
+    
     }
 
     hideLightbox(event){
@@ -14,9 +77,20 @@ export class MoviesList extends Component{
         // Reenable scroll and remove lightbox
         document.body.style.overflowY = "scroll"
         lBox.style.display = "none";
+
+        // Reset form to put dropdown back to first option
+        document.getElementById("unlinkedMovieListForm").reset();
     }
 
     displayLightBox(movieInfo){
+        //Find the lists that don't contain the movie
+        this.findUnlinkedMovieLists(movieInfo.imdbID);
+
+        this.setState({
+            currentMovie: movieInfo,
+        })
+        
+        // Retrieve elements
         var lBox = document.getElementById("lightbox");
         var divTitle = document.getElementById("LBPosterTitle");
         var divDirector = document.getElementById("LBPosterDirector");
@@ -45,7 +119,6 @@ export class MoviesList extends Component{
             divRating.style.color = "green";
         else
             divRating.style.color = "red";
-
     }
 
     render(){        
@@ -69,19 +142,19 @@ export class MoviesList extends Component{
                         </div>
                         <div id="DatabaseInfo">
                             <div id="DBIList">
-                                <label>
-                                <select name="display" onChange={this.selectList}>
-                                    {this.props.movieLists.map((x) => (
+                                <form id="unlinkedMovieListForm">
+                                <select name="currentList" onChange={this.handleChange}>
+                                    {this.state.unlinkedMovieLists.map((x) => (
                                         <option name="display" value={x}>{x}</option>
                                     ))}
                                 </select>
-                                </label>
+                                </form>
                             </div>
                             <div id="DBIAddToList">
-                                <input type="submit" value="Add to List" onClick={this.addList}/>
+                                <input type="submit" value="Add to List" onClick={this.addMovieToList}/>
                             </div>
                             <div id="DBIDeleteMovie">
-                                <input type="submit" value="Delete from Database" onClick={this.addList}/>
+                                <input type="submit" value="Delete" onClick={this.deleteMovie}/>
                             </div>
                         </div>
                     </div>

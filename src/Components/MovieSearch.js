@@ -24,14 +24,22 @@ export class MovieSearch extends Component{
             this.setState({[nam]: val});
         }
 
+        this.handleKeyDown = this.handleKeyDown.bind(this);
         this.search = this.search.bind(this);
     }
 
+    _
+    handleKeyDown(e){
+        // Set up enter press to call search 
+        if (e.keyCode === 13) {
+            this.search();
+        }
+    }
 
     search() {
         
         document.getElementById("movieForm").reset();
-        let searchStr = this.state.searchStr.toLowerCase();
+        let searchStr = this.state.searchStr.toLowerCase();        
         let found = false;
 
         // Check to see if searchStr is in database 
@@ -74,13 +82,10 @@ export class MovieSearch extends Component{
     render(){
 
         return (
-            <div>
-                <label>
-                <textarea type="text" name="searchStr" onChange={this.handleChange} />
-                </label>
-
+            <div id="MovieSearch">
+                <input id="movieSearchInput" type="text" name="searchStr" placeholder= "Movie title/ID..." onChange={this.handleChange} onKeyDown={this.handleKeyDown}/>
                 <div id="searchButton">
-                    <input type="submit" name="Search" onClick={this.search}/>
+                    <input type="submit" value="Search" onClick={this.search}/>
                 </div>
 
 

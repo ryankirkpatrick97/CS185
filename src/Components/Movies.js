@@ -109,34 +109,30 @@ export class Movies extends Component{
         });
     }
 
-    // Add movies to database
-    // this.state.ids.map(id => {
-    //     axios.get('https://www.omdbapi.com/?apikey=d0b4efe6&i=' + id)
-    //         .then((value) => {
-    //             firebase.database().ref('Watched/'+ value.data.imdbID).set(value.data)
-    //         })
-    // })
-
     render(){
         if(this.state.firebase != null){
             return(
                 <div>
-                    <form id="movieForm">
-                    <label>
-                    <select name="test" onChange={this.selectList}>
-                        {this.state.movieLists.map((x) => (
-                            <option name="test" value={x}>{x}</option>
-                        ))}
-                    </select>
-                    </label>
-                    </form>
+                    <div style={{display:"inline-block", width:"100%"}}>
+                        <div id="movieListAddSection">
+                            <div>
+                            <form id="movieForm">
+                            <select name="test" onChange={this.selectList}>
+                                {this.state.movieLists.map((x) => (
+                                    <option name="test" value={x}>{x}</option>
+                                ))}
+                            </select>
+                            </form>
+                            </div>
+                            <div id="addListButton">
+                            <input type="submit" value="Create New List" onClick={this.addList}/>
+                            </div>
+                        </div>
 
-
-                    <div>
-                        <input type="submit" value="Add List" onClick={this.addList}/>
+                        <MovieSearch firebase={this.state.firebase} setMovies={this.setMovies} />
                     </div>
 
-                    <MovieSearch firebase={this.state.firebase} setMovies={this.setMovies} />
+
                     <MovieList firebase={this.state.firebase} movies={this.state.movies} movieLists={this.state.movieLists}/>
                 </div>
                 )

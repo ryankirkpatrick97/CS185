@@ -77,7 +77,7 @@ export class FeedbackInput extends Component{
 
                 <label>
                 <div className="FeedbackLabel">Would you like to display your message to everyone?</div>
-                <select value={this.state.display} name="display" onChange={this.handleChange}>
+                <select name="display" onChange={this.handleChange}>
                     <option name="display" value="Yes" onChange={this.handleChange}>Yes</option>
                     <option name="display" value="No" onChange={this.handleChange}>No</option>
                 </select>
