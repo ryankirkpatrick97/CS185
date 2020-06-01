@@ -63,9 +63,12 @@ export class MoviePage extends Component{
             var numMovies = newMovies.length;
             var shownMovies = newMovies.slice(0, this.moviesPerPage)
             this.setState({
+                start: 0,
+                end: this.moviesPerPage,
                 movies: newMovies,
                 numMovies: numMovies,
                 shownMovies: shownMovies,
+                isPrevMovies: false,
                 isNextMovies: (this.moviesPerPage < numMovies)
             })
         }
