@@ -28,7 +28,6 @@ export class MovieSearch extends Component{
         this.search = this.search.bind(this);
     }
 
-    _
     handleKeyDown(e){
         // Set up enter press to call search 
         if (e.keyCode === 13) {

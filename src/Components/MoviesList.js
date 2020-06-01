@@ -14,7 +14,8 @@ export class MoviesList extends Component{
         this.hideLightbox = this.hideLightbox.bind(this);
         this.findUnlinkedMovieLists = this.findUnlinkedMovieLists.bind(this);
         this.addMovieToList = this.addMovieToList.bind(this);
-
+        this.creatLists = this.createLists.bind(this);
+        this.deleteMovie = this.deleteMovie.bind(this);
         this.handleChange = (event) => {
             let nam = event.target.name;
             let val = event.target.value;
@@ -31,6 +32,55 @@ export class MoviesList extends Component{
         } else {
             alert("Error: Movie is already in all lists");
         }
+    }
+
+    createLists(movieLists){
+        // alert(movieLists)
+        movieLists.map((x) => {
+            alert(x)
+        })
+
+    }
+
+    deleteMovie(event){
+        var imdbID = this.state.currentMovie.imdbID;
+        var movieLists = [];
+
+
+        // Loop through all lists and delete from database
+        let ref = this.props.firebase.database().ref();
+        ref.on('value', snapshot => {
+            snapshot.forEach((listChild) => {
+                // Search each list for if movie is contained
+                let found = false;
+                listChild.forEach((movieChild) => {
+                    if(movieChild.val() != null){
+                        if(movieChild.key === imdbID){
+                            movieLists.push(listChild.key);
+                            return;
+                        }
+                    }
+                })
+            })
+        })
+
+        // Delete Movies
+        movieLists.map((x) => {
+            // Remove movie from each list
+            ref.child(x).child(imdbID).remove();
+        })
+
+        // Reinstantiate missing lists
+        ref.on('value', snapshot => {
+            movieLists.map((x) => {
+                if(!snapshot.child(x).exists())
+                ref.child(x).set('');
+            })
+        })
+        
+        // Exit lightbox
+        this.hideLightbox();
+
     }
 
     findUnlinkedMovieLists(imdbID){
@@ -72,8 +122,9 @@ export class MoviesList extends Component{
 
     hideLightbox(event){
         var lBox = document.getElementById("lightbox");
-        if(event.target.id !== "lightbox")
-            return;
+        if(event != null)
+            if(event.target.id !== "lightbox")
+                return;
         // Reenable scroll and remove lightbox
         document.body.style.overflowY = "scroll"
         lBox.style.display = "none";
