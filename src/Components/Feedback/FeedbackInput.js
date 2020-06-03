@@ -1,8 +1,5 @@
 import React, {Component} from 'react'
-import {feedbackConfig} from '../config.js'
 import moment from 'moment';
-
-const firebase = require('firebase')
 
 export class FeedbackInput extends Component{
     constructor(props) {

@@ -1,10 +1,10 @@
 import React, { Component} from 'react';
 import Home from './Home.js'
 import Images from './Images.js'
-import Movies from './Movies.js'
+import Movies from './Movies/Movies.js'
 import Videos from './Videos.js'
 import Projects from './Projects.js'
-import Feedback from './Feedback.js'
+import Feedback from './Feedback/Feedback.js'
 
 export class Body extends Component {
     displayContent = () => {

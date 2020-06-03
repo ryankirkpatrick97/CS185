@@ -1,5 +1,4 @@
 import React, {Component} from 'react'
-import {movieConfig} from "../config.js"
 const axios = require('axios')
 
 

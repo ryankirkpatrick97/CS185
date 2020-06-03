@@ -1,5 +1,4 @@
 import React, {Component} from 'react'
-import { feedbackConfig} from '../config.js'
 
 export class FeedbackResponse extends Component{
     constructor(props) {

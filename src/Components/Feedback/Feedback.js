@@ -1,7 +1,7 @@
 import React, {Component} from 'react';
 import FeedbackInput from './FeedbackInput';
 import FeedbackResponse from './FeedbackResponse';
-import { feedbackConfig } from '../config';
+import { feedbackConfig } from '../../config';
 const firebase = require('firebase')
 
 export class Feedback extends Component{

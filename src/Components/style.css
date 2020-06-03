@@ -113,11 +113,6 @@ div#movieListAddSection{
     padding-left: 50px;
 }
 
-div#addListButton{
-    /* vertical-align: top;
-    float:right; */
-}
-
 div#MovieSearch{
     display:flex;
     float:right;
