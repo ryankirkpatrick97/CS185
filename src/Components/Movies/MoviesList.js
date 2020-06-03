@@ -14,7 +14,6 @@ export class MoviesList extends Component{
         this.hideLightbox = this.hideLightbox.bind(this);
         this.findUnlinkedMovieLists = this.findUnlinkedMovieLists.bind(this);
         this.addMovieToList = this.addMovieToList.bind(this);
-        this.creatLists = this.createLists.bind(this);
         this.deleteMovie = this.deleteMovie.bind(this);
         this.handleChange = (event) => {
             let nam = event.target.name;
@@ -25,21 +24,13 @@ export class MoviesList extends Component{
 
     addMovieToList(){
         // Add movie to currentList
-        if(this.state.currentList != ''){
+        if(this.state.currentList !== ''){
             this.props.firebase.database().ref(this.state.currentList + "/" + this.state.currentMovie.imdbID).set(this.state.currentMovie);
             alert(this.state.currentMovie.Title + " successfully added to " + this.state.currentList);
             this.findUnlinkedMovieLists(this.state.currentMovie.imdbID);
         } else {
             alert("Error: Movie is already in all lists");
         }
-    }
-
-    createLists(movieLists){
-        // alert(movieLists)
-        movieLists.map((x) => {
-            alert(x)
-        })
-
     }
 
     deleteMovie(event){
@@ -52,7 +43,6 @@ export class MoviesList extends Component{
         ref.on('value', snapshot => {
             snapshot.forEach((listChild) => {
                 // Search each list for if movie is contained
-                let found = false;
                 listChild.forEach((movieChild) => {
                     if(movieChild.val() != null){
                         if(movieChild.key === imdbID){
@@ -65,18 +55,18 @@ export class MoviesList extends Component{
         })
 
         // Delete Movies
-        movieLists.map((x) => {
+        movieLists.forEach((x) => {
             // Remove movie from each list
             ref.child(x).child(imdbID).remove();
-        })
+        });
 
         // Reinstantiate missing lists
         ref.on('value', snapshot => {
-            movieLists.map((x) => {
+            movieLists.forEach((x) => {
                 if(!snapshot.child(x).exists())
                 ref.child(x).set('');
-            })
-        })
+            });
+        });
         
         // Exit lightbox
         this.hideLightbox();

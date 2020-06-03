@@ -59,7 +59,6 @@ export class MovieSearch extends Component{
         });
         
         // Check to see if searchStr is imdbID and retrieve from omdb
-        let movie = [];
         axios.get('https://www.omdbapi.com/?apikey=d0b4efe6&i=' + searchStr)
             .then((value) => {
                 if(value.data.Error == null){

@@ -44,11 +44,11 @@ export class MoviesListAdd extends Component{
         }
         
         // Read the lists from firebase
-        movieListsToRead.map((x) => {
+        movieListsToRead.forEach((x) => {
             let ref = this.props.firebase.database().ref(x);
             ref.on('value', snapshot => {
                 if(snapshot.val() != null){
-                    Object.entries(snapshot.val()).map(([key, movie]) => {
+                    Object.entries(snapshot.val()).forEach(([key, movie]) => {
                         newMovies[key] = movie;
                     });
                 }
