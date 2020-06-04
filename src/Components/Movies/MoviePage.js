@@ -86,15 +86,19 @@ export class MoviePage extends Component{
 
 
     render(){
-        return(
-            <div>
-                <MovieList firebase={this.props.firebase} movies={this.state.shownMovies} />
-                <div style={{display: "inline-block", width: "100%"}}>
-                    {this.displayPrev()}
-                    {this.displayNext()}
+        if(this.props.toDisplay){
+            return(
+                <div>
+                    <MovieList firebase={this.props.firebase} movies={this.state.shownMovies} />
+                    <div style={{display: "inline-block", width: "100%"}}>
+                        {this.displayPrev()}
+                        {this.displayNext()}
+                    </div>
                 </div>
-            </div>
-        )
+            )
+        } else {
+            return(<div></div>)
+        }
     };
 }
 export default MoviePage;

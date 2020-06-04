@@ -166,11 +166,15 @@ export class MovieGraph extends Component{
     }
 
 
-    componentDidMount(){
-        const elem = document.getElementById("mysvg");
+    componentWillReceiveProps(nextProps){
+        var elem = document.getElementById("mysvg");
+        elem.style.display = nextProps.toDisplay ? "block" : "none";
+    }
 
+    componentDidMount(){
+        var elem = document.getElementById("mysvg");
+        elem.style.display = "none";
         elem.appendChild(this.chart(data.nodes, data.links));
-            
     }
 
 

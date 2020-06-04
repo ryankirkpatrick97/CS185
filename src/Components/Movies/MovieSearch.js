@@ -78,16 +78,18 @@ export class MovieSearch extends Component{
 
     render(){
 
-        return (
-            <div id="MovieSearch">
-                <input id="movieSearchInput" type="text" name="searchStr" placeholder= "Movie title/ID..." onChange={this.handleChange} onKeyDown={this.handleKeyDown}/>
-                <div id="searchButton">
-                    <input type="submit" value="Search" onClick={this.search}/>
+        if(this.props.toDisplay){
+            return (
+                <div id="MovieSearch">
+                    <input id="movieSearchInput" type="text" name="searchStr" placeholder= "Movie title/ID..." onChange={this.handleChange} onKeyDown={this.handleKeyDown}/>
+                    <div id="searchButton">
+                        <input type="submit" value="Search" onClick={this.search}/>
+                    </div>
                 </div>
-
-
-            </div>
-        )
+            )
+        } else {
+            return(<div></div>)
+        }
     };
 }
 export default MovieSearch;

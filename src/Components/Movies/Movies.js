@@ -53,29 +53,16 @@ export class Movies extends Component{
 
     render(){
         if(this.state.firebase != null){
-            if(!this.state.showGraphViz){
-                // Display Normal List View
-                return(
-                    <div>
-                        <div style={{display:"inline-block", width:"100%"}}>
-                            <MoviesListAdd firebase={this.state.firebase} setMovies={this.setMovies} setGraphViz={this.setGraphViz}/>
-                            <MovieSearch firebase={this.state.firebase} setMovies={this.setMovies} />
-                        </div>
-                        <MoviePage firebase={this.state.firebase} movies={this.state.movies}/>
+            return(
+                <div>
+                    <div style={{display:"inline-block", width:"100%"}}>
+                        <MoviesListAdd firebase={this.state.firebase} setMovies={this.setMovies} setGraphViz={this.setGraphViz}/>
+                        <MovieSearch firebase={this.state.firebase} setMovies={this.setMovies} toDisplay={!this.state.showGraphViz}/>
                     </div>
-                    )
-            } else {
-                // Display Graph Vizualization
-                return(
-                    <div>
-                        <div style={{display:"inline-block", width:"100%"}}>
-                            <MoviesListAdd firebase={this.state.firebase} setMovies={this.setMovies} setGraphViz={this.setGraphViz}/>
-                        </div>
-                        <MovieGraph firebase={this.state.firebase} movies={this.state.movies}/>
-                    </div>
-                    )
-            }
-            
+                    <MoviePage firebase={this.state.firebase} movies={this.state.movies} toDisplay={!this.state.showGraphViz}/>
+                    <MovieGraph firebase={this.state.firebase} movies={this.state.movies} toDisplay={this.state.showGraphViz}/>
+                </div>
+                )            
         } else {
             return(<div></div>)
         }
