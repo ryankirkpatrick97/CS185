@@ -17,7 +17,10 @@ export class MoviesListAdd extends Component{
             let val = event.target.value;
             this.setState({
                 currentList: val,
-            }, this.loadFromFirebase(val));
+            }, () => {
+                this.loadFromFirebase(val);
+                this.props.setGraphViz(val === "GraphViz");
+            });
         };
 
         this.addList = (event) => {

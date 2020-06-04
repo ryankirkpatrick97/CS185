@@ -2,6 +2,7 @@ import React, {Component} from 'react'
 import MoviesListAdd from "./MoviesListAdd"
 import MovieSearch from "./MovieSearch.js"
 import MoviePage from "./MoviePage.js"
+import MovieGraph from "./MovieGraph.js"
 import {movieConfig} from "../../config.js"
 const firebase = require('firebase')
 
@@ -18,12 +19,19 @@ export class Movies extends Component{
             movieLists: ["All"],
             currentList: "All",
             movies: [],
+            showGraphViz: false,
         }
         this.name = "movieApp";
 
         this.setMovies = (movies) => {
             this.setState({
                 movies: movies,
+            });
+        }
+
+        this.setGraphViz = (boolValue) => {
+            this.setState({
+                showGraphViz: boolValue,
             });
         }
     }
@@ -45,16 +53,29 @@ export class Movies extends Component{
 
     render(){
         if(this.state.firebase != null){
-            return(
-                <div>
-                    <div style={{display:"inline-block", width:"100%"}}>
-                        <MoviesListAdd firebase={this.state.firebase} setMovies={this.setMovies}/>
-                        <MovieSearch firebase={this.state.firebase} setMovies={this.setMovies} />
+            if(!this.state.showGraphViz){
+                // Display Normal List View
+                return(
+                    <div>
+                        <div style={{display:"inline-block", width:"100%"}}>
+                            <MoviesListAdd firebase={this.state.firebase} setMovies={this.setMovies} setGraphViz={this.setGraphViz}/>
+                            <MovieSearch firebase={this.state.firebase} setMovies={this.setMovies} />
+                        </div>
+                        <MoviePage firebase={this.state.firebase} movies={this.state.movies}/>
                     </div>
-
-                    <MoviePage firebase={this.state.firebase} movies={this.state.movies}/>
-                </div>
-                )
+                    )
+            } else {
+                // Display Graph Vizualization
+                return(
+                    <div>
+                        <div style={{display:"inline-block", width:"100%"}}>
+                            <MoviesListAdd firebase={this.state.firebase} setMovies={this.setMovies} setGraphViz={this.setGraphViz}/>
+                        </div>
+                        <MovieGraph firebase={this.state.firebase} movies={this.state.movies}/>
+                    </div>
+                    )
+            }
+            
         } else {
             return(<div></div>)
         }
