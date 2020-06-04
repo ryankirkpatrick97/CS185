@@ -11,12 +11,12 @@ const data = {
             
         },
         {
-            name: "The Prestige",
+            Title: "The Prestige",
             id: 2,
             Poster: "https://m.media-amazon.com/images/M/MV5BMjA4NDI0MTIxNF5BMl5BanBnXkFtZTYwNTM0MzY2._V1_SX300.jpg"
         },
         {
-            name: "Hobbit",
+            Title: "Hobbit",
             id: 3,
             Poster: "https://m.media-amazon.com/images/M/MV5BMTcwNTE4MTUxMl5BMl5BanBnXkFtZTcwMDIyODM4OA@@._V1_SX300.jpg",
         }
@@ -25,7 +25,7 @@ const data = {
         {
             source: 1,
             target: 0,
-            value: 1,
+            // value: 1,
         }
     ]
 }
@@ -39,6 +39,8 @@ export class MovieGraph extends Component{
 
         this.state = {
         }
+
+        this.makeNodesAndLinks = this.makeNodesAndLinks.bind(this);
     }
 
     drag = (simulation) => {
@@ -99,7 +101,7 @@ export class MovieGraph extends Component{
             .data(obj_nodes)
             .join("pattern")
                 // .attr("id", "pattern")
-                .attr("id", d => "pattern" + d.id)
+                .attr("id", d => "pattern" + d.imdbID)
                 .attr("width", 20)
                 .attr("height", 20)
                 // .attr("patternUnits", "userSpaceOnUse")
@@ -112,15 +114,13 @@ export class MovieGraph extends Component{
                 .attr("y", -20)
 
         const color = (node) => {
-            if(node.id === 1) // It's a first name
-                return(d3.color("blue"));
-            // return("url(#pattern)")
-            return("url(#pattern" + node.id + ")")
-            // return(d3.color("steelblue"));
+            if(node.group === "actors")
+                return(d3.color("steelblue"));
+            return("url(#pattern" + node.imdbID  + ")") // It's a movie
         }
 
         const radius = (node) => {
-            if(node.id === 1) // It's a first name
+            if(node.group === "actors")
                 return(20);
             return(100);
         }
@@ -134,17 +134,6 @@ export class MovieGraph extends Component{
                 .attr("r", radius)
                 .attr("fill", color)
                 .call(this.drag(simulation))
-                // .append("image")
-                // .attr("xlink:href", "http://placekitten.com/g/48/48")
-
-
-
-        // const images = node.append("image")
-        //     .attr("xlink:href", "http://placekitten.com/g/48/48")
-        //     .attr("width", 48)
-        //     .attr("height", 48)
-        //     .attr("x", 10)
-        //     .attr("y", 10)
 
 
         simulation.on("tick", () =>{
@@ -166,15 +155,66 @@ export class MovieGraph extends Component{
     }
 
 
+    makeNodesAndLinks(movies){
+        var nodes = {};
+        var movieArr = Object.values(movies)
+        // Get movies and actors out of movies
+        movieArr.forEach((movie) => {
+            nodes[movie.imdbID] = movie;
+            var actors = movie.Actors;
+            var actorsArr = actors.split(",")
+            actorsArr.forEach(x => 
+                nodes[x.trim()] = {name: x.trim(), group: "actors"}
+            )
+            console.log(nodes)
+        })
+
+        // Convert nodes into list
+        nodes = Object.values(nodes)
+        console.log(nodes)
+
+        // Make link list to describe how movies connect to actors
+        var links = [];
+        nodes.forEach(function(item, i) {
+            if(item.Actors){ // Is a movie
+                var actorsArr = item.Actors.split(",") // get all actors in movie
+                actorsArr.forEach(actor => {
+                    nodes.forEach(function(item, j){
+                        if(item.group === "actors"){ // is an actor
+                            if(item.name === actor.trim()){ // is in the moive
+                                links.push({source: i, target: j})
+                            }
+                        }
+                    })
+                })
+
+            }
+        })
+        return [nodes, links];
+    }
+
+
+
     componentWillReceiveProps(nextProps){
-        var elem = document.getElementById("mysvg");
-        elem.style.display = nextProps.toDisplay ? "block" : "none";
+        if(this.props.toDisplay !== nextProps.toDisplay){
+            var elem = document.getElementById("mysvg");
+            elem.style.display = nextProps.toDisplay ? "block" : "none";
+            
+            if(nextProps.toDisplay && (this.props.movies !== nextProps.movies)){
+                var nodesAndLinks;
+                nodesAndLinks = this.makeNodesAndLinks(nextProps.movies)
+                elem.appendChild(this.chart(nodesAndLinks[0], nodesAndLinks[1]))
+            }
+        }
+        
+
+        
     }
 
     componentDidMount(){
         var elem = document.getElementById("mysvg");
         elem.style.display = "none";
-        elem.appendChild(this.chart(data.nodes, data.links));
+        // elem.appendChild(this.chart(data.nodes, data.links));
     }
 
 
