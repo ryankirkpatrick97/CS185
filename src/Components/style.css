@@ -126,6 +126,7 @@ input[type=text]{
 
 div#DatabaseInfo{
     display:flex;
+    flex-wrap: wrap;
     width:100%;
     vertical-align: bottom;
 }
