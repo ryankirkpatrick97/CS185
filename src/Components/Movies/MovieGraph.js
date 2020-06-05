@@ -2,36 +2,6 @@ import React, {Component} from 'react'
 var d3 = require("d3");
 
 
-const data = {
-    nodes: [
-        {
-            name: "actor",
-            id: 1,
-
-            
-        },
-        {
-            Title: "The Prestige",
-            id: 2,
-            Poster: "https://m.media-amazon.com/images/M/MV5BMjA4NDI0MTIxNF5BMl5BanBnXkFtZTYwNTM0MzY2._V1_SX300.jpg"
-        },
-        {
-            Title: "Hobbit",
-            id: 3,
-            Poster: "https://m.media-amazon.com/images/M/MV5BMTcwNTE4MTUxMl5BMl5BanBnXkFtZTcwMDIyODM4OA@@._V1_SX300.jpg",
-        }
-    ],
-    links: [
-        {
-            source: 1,
-            target: 0,
-            // value: 1,
-        }
-    ]
-}
-
-
-
 export class MovieGraph extends Component{
     constructor(props){
         super(props);
@@ -100,16 +70,11 @@ export class MovieGraph extends Component{
             .selectAll("pattern")
             .data(obj_nodes)
             .join("pattern")
-                // .attr("id", "pattern")
                 .attr("id", d => "pattern" + d.imdbID)
                 .attr("width", 20)
                 .attr("height", 20)
-                // .attr("patternUnits", "userSpaceOnUse")
                 .append("image")
                 .attr("xlink:href", d => d.Poster)
-                // .attr("href", "../../images/me.jpg")
-                // .attr("width", 48)
-                // .attr("height", 48)
                 .attr("x", -40)
                 .attr("y", -20)
 
@@ -135,6 +100,9 @@ export class MovieGraph extends Component{
                 .attr("fill", color)
                 .call(this.drag(simulation))
 
+
+        node.append("svg:title")
+            .text(function(d) {return d.name})
 
         simulation.on("tick", () =>{
                 link
