@@ -169,6 +169,12 @@ export class MovieGraph extends Component{
             elem.style.display = nextProps.toDisplay ? "block" : "none";
             
             if(nextProps.toDisplay && (this.props.movies !== nextProps.movies)){
+                // Clear old display
+                while (elem.firstChild) {
+                    elem.removeChild(elem.lastChild);
+                }
+
+                // Fill in new nodes and links
                 var nodesAndLinks;
                 nodesAndLinks = this.makeNodesAndLinks(nextProps.movies)
                 elem.appendChild(this.chart(nodesAndLinks[0], nodesAndLinks[1]))
